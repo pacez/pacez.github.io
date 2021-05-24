@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="QTXK5KB-iC_-HFY2MvRCXuio0pi2DDph9k_FLQUB5oU">
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="dejLC6gFLw">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="防重复提交,diabled,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="禁止用户进行DOM操作，是前端工程师在交互开发过程中最常遇到的一种需求。比如:防止表单重复提交、勾选阅读协议才开放提交按钮等等… 本文介绍了一种作者在平时工作中管理DISABLED行为的便捷方案，利用极少量的代码，通过简单的约定，即可轻松管理交互过程中的DISABLED，ENABLE。">
+<meta name="keywords" content="防重复提交,diabled">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何优雅的管理DISABLED行为">
+<meta property="og:url" content="http://pacez.github.io/2016/03/18/如何优雅的管理DISABLED行为/index.html">
+<meta property="og:site_name" content="Pace&#39;s Blog">
+<meta property="og:description" content="禁止用户进行DOM操作，是前端工程师在交互开发过程中最常遇到的一种需求。比如:防止表单重复提交、勾选阅读协议才开放提交按钮等等… 本文介绍了一种作者在平时工作中管理DISABLED行为的便捷方案，利用极少量的代码，通过简单的约定，即可轻松管理交互过程中的DISABLED，ENABLE。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-05-24T08:52:37.020Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何优雅的管理DISABLED行为">
+<meta name="twitter:description" content="禁止用户进行DOM操作，是前端工程师在交互开发过程中最常遇到的一种需求。比如:防止表单重复提交、勾选阅读协议才开放提交按钮等等… 本文介绍了一种作者在平时工作中管理DISABLED行为的便捷方案，利用极少量的代码，通过简单的约定，即可轻松管理交互过程中的DISABLED，ENABLE。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://pacez.github.io/2016/03/18/如何优雅的管理DISABLED行为/">
+
+
+
+
+
+  <title>如何优雅的管理DISABLED行为 | Pace's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Pace's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-lottery">
+          <a href="/lottery" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            彩票
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://pacez.github.io/2016/03/18/如何优雅的管理DISABLED行为/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Pace Zhong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/default_avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Pace's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何优雅的管理DISABLED行为</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-03-18T09:51:45+08:00">
+                2016-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>禁止用户进行DOM操作，是前端工程师在交互开发过程中最常遇到的一种需求。比如:防止表单重复提交、勾选阅读协议才开放提交按钮等等… 本文介绍了一种作者在平时工作中管理DISABLED行为的便捷方案，利用极少量的代码，通过简单的约定，即可轻松管理交互过程中的DISABLED，ENABLE。</p>
+<a id="more"></a>
+<p><strong>开始编码前，首先我们来抽像下行为模型：</strong></p>
+<ol>
+<li>监控用户触发DOM事件</li>
+<li>事件触发前判断DOM是否标识禁用</li>
+<li>yes,不触发任何操作 | no, 触发dom绑定事件</li>
+</ol>
+<p><strong>细想下来用户行为非常简单，判断逻辑也非常简单，哪我们开始构思如何实现统一便捷的管理方法。</strong></p>
+<p>第一步：首先来看看上面第2点，判断DOM是否具有禁用标识。 这个非常容易实现，通过固定的class，dom 属性等等特征都可以做到。</p>
+<p>第二步：回头再查看第1点，这一步，我们要在用户事件绑定的方法触发前，进行dom状态的识别。这里我们从jQuery事件绑定出发 <u style="font-size: 12px;">(按照同样的思路，走深一层，也可以在原生JAVASCRIPT做出同样的扩展，这里作者就偷偷懒啦)</u>，只要在jQuery事件触发前，前置一个判断不就好了嘛。这一步也非常容易实现。SO，实现逻辑清晰了。下面来看看具体实现方案吧：</p>
+<p><strong>实现步骤：</strong></p>
+<ol>
+<li>定义一个标识，这里我们定义.disabled为禁用标识。符合大部分的开发逻辑.</li>
+<li>对jQuery事件绑定进行改写，这也是最核心，最简单的地方, 由于代码非常简单我也就不多作说明了，大家往下看吧:</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//基于这种方式大家也可以做出更多的前置规则扩展</span></span><br><span class="line"><span class="keyword">var</span> origAdd = $.event.add;</span><br><span class="line">$.event.add=<span class="function"><span class="keyword">function</span>(<span class="params">elem, types, handler, data, selector</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> origHandler = handler;</span><br><span class="line">	handler=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(!$(<span class="keyword">this</span>).hasClass(<span class="string">'disabled'</span>)) origHandler.call(<span class="keyword">this</span>,e);</span><br><span class="line">	&#125;</span><br><span class="line">	origAdd.apply(<span class="keyword">this</span>,<span class="built_in">arguments</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>在需要控制用户事件的DOM上，动态的添加删除.disabled就好了。</li>
+</ol>
+<p><strong>用例：</strong><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Site.send(&#123;</span><br><span class="line">  antiBtn: $dom <span class="comment">//触发元素的jQuery选器，用于防重复提交。</span></span><br><span class="line">  ...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这是作者在某项目中，通信模块的防重复提交的代码实例, 只用简单在异步请求中指定要防重复提交的按钮，让其在触发前、success、error中自动控制对按钮.diabled的添加删除。在调用时指定好元素jQuery选择器，即可轻松实现对按钮的禁用状态控制。</p>
+<p>本文仅分享作者工作中的经验心得，欢迎大家提出新的思路。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/防重复提交/" rel="tag"># 防重复提交</a>
+          
+            <a href="/tags/diabled/" rel="tag"># diabled</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/23/nodejs实战——在线邮件模板编辑器SRM/" rel="next" title="nodejs实战——在线邮件模板编辑器SRM">
+                <i class="fa fa-chevron-left"></i> nodejs实战——在线邮件模板编辑器SRM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/07/Mac-OS-下-Nexus-6p-还原官方系统，支持OTA简易教程/" rel="prev" title="Mac OS 下 Nexus 6p  还原官方系统，支持OTA简易教程">
+                Mac OS 下 Nexus 6p  还原官方系统，支持OTA简易教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+  <div id="comment"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+    var gitment = new Gitment({
+      id: 'page_s_blog_2016-03-18 09:51:45', // 可选。默认为 location.href
+      owner: 'pacez', // 可以是你的GitHub用户名，也可以是github id
+      repo: 'pacez.github.io',
+      oauth: {
+        client_id: '1f324f69b441bb001488',
+        client_secret: 'b010ddcfbd7762acc1afbabaa9d03ba895821133',
+      },
+    })
+    gitment.render('comment')
+  </script>
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="Pace Zhong">
+          <p class="site-author-name" itemprop="name">Pace Zhong</p>
+           
+              <p class="site-description motion-element" itemprop="description">简单快乐人</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://github.com/pacez" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Pace Zhong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?008010baf81a25fbb0f6acdeeb47293e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+
+</body>
+</html>

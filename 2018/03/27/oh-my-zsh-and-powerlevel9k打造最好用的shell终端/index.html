@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="QTXK5KB-iC_-HFY2MvRCXuio0pi2DDph9k_FLQUB5oU">
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="dejLC6gFLw">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="zsh,powerlevel9k,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="某日架构师童鞋兴冲冲的飘来推荐最强shell装逼终端，酒家一眼望去，被亮瞎双眼，深感做为FE，这B必需得装呀。下面记录了安装流程，便于以后新电脑装B。">
+<meta name="keywords" content="zsh,powerlevel9k">
+<meta property="og:type" content="article">
+<meta property="og:title" content="oh-my-zsh-and-powerlevel9k打造最好用的shell终端">
+<meta property="og:url" content="http://pacez.github.io/2018/03/27/oh-my-zsh-and-powerlevel9k打造最好用的shell终端/index.html">
+<meta property="og:site_name" content="Pace&#39;s Blog">
+<meta property="og:description" content="某日架构师童鞋兴冲冲的飘来推荐最强shell装逼终端，酒家一眼望去，被亮瞎双眼，深感做为FE，这B必需得装呀。下面记录了安装流程，便于以后新电脑装B。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pacez.github.io/images/zsh.png">
+<meta property="og:updated_time" content="2021-05-24T08:52:37.020Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="oh-my-zsh-and-powerlevel9k打造最好用的shell终端">
+<meta name="twitter:description" content="某日架构师童鞋兴冲冲的飘来推荐最强shell装逼终端，酒家一眼望去，被亮瞎双眼，深感做为FE，这B必需得装呀。下面记录了安装流程，便于以后新电脑装B。">
+<meta name="twitter:image" content="http://pacez.github.io/images/zsh.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://pacez.github.io/2018/03/27/oh-my-zsh-and-powerlevel9k打造最好用的shell终端/">
+
+
+
+
+
+  <title>oh-my-zsh-and-powerlevel9k打造最好用的shell终端 | Pace's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Pace's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-lottery">
+          <a href="/lottery" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            彩票
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://pacez.github.io/2018/03/27/oh-my-zsh-and-powerlevel9k打造最好用的shell终端/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Pace Zhong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/default_avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Pace's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">oh-my-zsh-and-powerlevel9k打造最好用的shell终端</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-27T15:43:57+08:00">
+                2018-03-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>某日架构师童鞋兴冲冲的飘来推荐最强shell装逼终端，酒家一眼望去，被亮瞎双眼，深感做为FE，这B必需得装呀。<br>下面记录了安装流程，便于以后新电脑装B。</p>
+<a id="more"></a>
+<center> <img src="/images/zsh.png" alt="oh-my-zsh-and-powerlevel9k"></center>
+
+<p>Tips： 本文介绍的是Mac OS下安装流程，其他系统请参考官网文档。</p>
+<h2 id="安装oh-my-zsh"><a href="#安装oh-my-zsh" class="headerlink" title="安装oh-my-zsh"></a>安装oh-my-zsh</h2><p>一条命令搞定：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -c &quot;$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="安装powerlevel9k"><a href="#安装powerlevel9k" class="headerlink" title="安装powerlevel9k"></a>安装powerlevel9k</h2><p>同样一条命令搞定：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k</span><br></pre></td></tr></table></figure></p>
+<h2 id="选择使用powerlevel9k主题"><a href="#选择使用powerlevel9k主题" class="headerlink" title="选择使用powerlevel9k主题"></a>选择使用powerlevel9k主题</h2><ol>
+<li>使用任何文本编辑器，打开 ~/.zshrc 文件</li>
+<li>找到到ZSH_THEME，将值修改为powerlevel9k/powerlevel9k</li>
+<li>如果是第一次使用zsh的同学，建议将.bash_profile的配置也引入,在最后添加source ~/.bash_profile</li>
+</ol>
+<h2 id="安装字体"><a href="#安装字体" class="headerlink" title="安装字体"></a>安装字体</h2><ol>
+<li>点击下载<a href="/download/Meslo LG M Regular for Powerline.ttf">Meslo LG M Regular for Powerline.ttf</a></li>
+<li>双击安装字体</li>
+</ol>
+<h2 id="配置字体"><a href="#配置字体" class="headerlink" title="配置字体"></a>配置字体</h2><ol>
+<li>重启终端，会看到显示有乱码。</li>
+<li>配置终端的字体为刚安装的字体【Meslo LG S DZ for Powerline】即可，事实上，字体列表里的powerline系列应该都可用。不同终端配置方式不一样。过于简单这里不写具体流程了。不会的朋友可以自行google</li>
+</ol>
+<h2 id="推荐插件配置"><a href="#推荐插件配置" class="headerlink" title="推荐插件配置"></a>推荐插件配置</h2><p>使用文本编辑器，打开~/.zshrc文件。找到plugins配置上，添加如下配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">plugins=(</span><br><span class="line">  zsh-autosuggestions</span><br><span class="line">  git</span><br><span class="line">  zsh-syntax-highlighting</span><br><span class="line">  last-working-dir</span><br><span class="line">  wd</span><br><span class="line">  autojump</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<h2 id="集成ATOM的终端插件——platformio-ide-terminal"><a href="#集成ATOM的终端插件——platformio-ide-terminal" class="headerlink" title="集成ATOM的终端插件——platformio-ide-terminal"></a>集成ATOM的终端插件——platformio-ide-terminal</h2><ol>
+<li>进入platformio-ide-terminal配置页面</li>
+<li>修改Shell Override值为/bin/zsh （如果界面还是最古老的样式，可以变化此值）</li>
+<li>修改Font Family值为安装的poweline系列字体，比如我电脑配置的是：Meslo LG S DZ for Powerline</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zsh/" rel="tag"># zsh</a>
+          
+            <a href="/tags/powerlevel9k/" rel="tag"># powerlevel9k</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/08/解决Gitment初始化评论时validation failed/" rel="next" title="解决Gitment初始化评论时validation failed">
+                <i class="fa fa-chevron-left"></i> 解决Gitment初始化评论时validation failed
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/10/成都天府新区购房落户过程记录/" rel="prev" title="成都天府新区购房落户过程记录">
+                成都天府新区购房落户过程记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+  <div id="comment"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+    var gitment = new Gitment({
+      id: 'page_s_blog_2018-03-27 03:43:57', // 可选。默认为 location.href
+      owner: 'pacez', // 可以是你的GitHub用户名，也可以是github id
+      repo: 'pacez.github.io',
+      oauth: {
+        client_id: '1f324f69b441bb001488',
+        client_secret: 'b010ddcfbd7762acc1afbabaa9d03ba895821133',
+      },
+    })
+    gitment.render('comment')
+  </script>
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="Pace Zhong">
+          <p class="site-author-name" itemprop="name">Pace Zhong</p>
+           
+              <p class="site-description motion-element" itemprop="description">简单快乐人</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://github.com/pacez" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装oh-my-zsh"><span class="nav-number">1.</span> <span class="nav-text">安装oh-my-zsh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装powerlevel9k"><span class="nav-number">2.</span> <span class="nav-text">安装powerlevel9k</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择使用powerlevel9k主题"><span class="nav-number">3.</span> <span class="nav-text">选择使用powerlevel9k主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装字体"><span class="nav-number">4.</span> <span class="nav-text">安装字体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置字体"><span class="nav-number">5.</span> <span class="nav-text">配置字体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推荐插件配置"><span class="nav-number">6.</span> <span class="nav-text">推荐插件配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集成ATOM的终端插件——platformio-ide-terminal"><span class="nav-number">7.</span> <span class="nav-text">集成ATOM的终端插件——platformio-ide-terminal</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Pace Zhong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?008010baf81a25fbb0f6acdeeb47293e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="QTXK5KB-iC_-HFY2MvRCXuio0pi2DDph9k_FLQUB5oU">
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="dejLC6gFLw">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="CSRF,XSS,前端安全,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="做为前端工程师，平时少不了要与客户端安全问题打交道，这里记录了一些自己平时工作中对于客户端安全的理解，以及一些应对方式。">
+<meta name="keywords" content="CSRF,XSS,前端安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端话安全">
+<meta property="og:url" content="http://pacez.github.io/2018/03/06/前端话安全/index.html">
+<meta property="og:site_name" content="Pace&#39;s Blog">
+<meta property="og:description" content="做为前端工程师，平时少不了要与客户端安全问题打交道，这里记录了一些自己平时工作中对于客户端安全的理解，以及一些应对方式。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pacez.github.io/images/sr.png">
+<meta property="og:image" content="http://pacez.github.io/images/ClickJacking.png">
+<meta property="og:image" content="http://pacez.github.io/images/csrf.png">
+<meta property="og:image" content="http://pacez.github.io/images/proxy.png">
+<meta property="og:image" content="http://pacez.github.io/images/combo.png">
+<meta property="og:updated_time" content="2021-05-24T08:52:37.020Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端话安全">
+<meta name="twitter:description" content="做为前端工程师，平时少不了要与客户端安全问题打交道，这里记录了一些自己平时工作中对于客户端安全的理解，以及一些应对方式。">
+<meta name="twitter:image" content="http://pacez.github.io/images/sr.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://pacez.github.io/2018/03/06/前端话安全/">
+
+
+
+
+
+  <title>前端话安全 | Pace's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Pace's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-lottery">
+          <a href="/lottery" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            彩票
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://pacez.github.io/2018/03/06/前端话安全/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Pace Zhong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/default_avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Pace's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">前端话安全</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-06T13:22:36+08:00">
+                2018-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>做为前端工程师，平时少不了要与客户端安全问题打交道，这里记录了一些自己平时工作中对于客户端安全的理解，以及一些应对方式。</p>
+<a id="more"></a>
+<hr>
+<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>首先是同源策略，同源策略作为客户端安全的基础约定，客户端的安全功能都是基于它进行构建的。<br>大部分从客户端发起的攻击，第一步需要做的就是想办法让自己的攻击手段符合同源策略约定，或欺骗，或绕过。</p>
+<p>同源策略，约定了：协议，域名，端口 必需统一。</p>
+<p><center><img src="/images/sr.png" alt="同源策略"></center><br>它的影响范围对前端来说常见于：</p>
+<ol>
+<li>XMLHttpRequest请求</li>
+<li>DOM操作（常见于嵌套了iframe的页面）</li>
+<li>cookie操作</li>
+<li>Web storage</li>
+<li>…</li>
+</ol>
+<p>我们通过src加载的跨域静态资源不在受限范围内。</p>
+<p>WEB应用发展到今天功能越来越强大，应用场景也越来越复杂，难以避免我们有时需要进行跨域通信，而同源策略也同时限制了我们这类业务需求，针对这种场景，我们目前主流的解决方案是：设置响应头与JSONP。</p>
+<ol>
+<li>设置响应头：Access-Control-Allow-Origin: * ，  注意，其实这里*号是非常不安全的设置方式，这样允许了任何域名进行访问，从安全角度考虑建议设置为固定的域名。 而 * 更多用于静态资源CDN这样的非业务服务器。</li>
+<li>JSONP其实利用的就是src加载静态资源不受同源策略限制这个特点，通过生成一个JS文件的方式，进行前后端的通信。</li>
+</ol>
+<p>利用这些方案满足我们业务的同时，我们也不能忘了潜在的安全风险，添加referer check过滤非法请求是一个很好的方式。</p>
+<hr>
+<h2 id="ClickJacking（点击劫持）"><a href="#ClickJacking（点击劫持）" class="headerlink" title="ClickJacking（点击劫持）"></a>ClickJacking（点击劫持）</h2><p>点击劫持是一种视觉上的欺骗手段。攻击者使用一个透明的、不可见的iframe，覆盖在一个网页上，然后诱使用户在该网页上进行操作，此时用户将在不知情的情况下点击透明的iframe页面。通过调整iframe页面的位置，可以诱使用户恰好点击在iframe页面的一些功能性按钮上。</p>
+<p><center><img src="/images/ClickJacking.png" alt="ClickJacking"></center><br>ClickJacking被广泛用于钓鱼网站以及广告作弊，应对它业界也已经有了比较成熟的解决方案：</p>
+<ol>
+<li><p>frame busting: —— 脚本判断是否iframe嵌套</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if top != self</span><br><span class="line">if top.location != self.location</span><br><span class="line">if top.location != location</span><br><span class="line">if window != top</span><br><span class="line">……</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>X-Frame-Options:  ——设置响应头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DENY  —— 不允许通过Iframe加载</span><br><span class="line">SAMEORIGIN —— 只允许同源网站通过iframe加载</span><br><span class="line">ALLOW-FROM origin —— 允许设置的origin使用iframe加载</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>第一种方案，实现代码多样，存在被绕过的风险，所以通常我们选择第二种方案设置响应头来应对点击劫持。</p>
+<hr>
+<h2 id="CSRF（跨站请求伪造）"><a href="#CSRF（跨站请求伪造）" class="headerlink" title="CSRF（跨站请求伪造）"></a>CSRF（跨站请求伪造）</h2><p>CSRF 是一种挟制用户在当前已登录的Web应用上执行非本意的操作的攻击方法。利用的是网站对用户网页浏览器的信任机制。</p>
+<p>上面的描述有点抽象，我们还可以这么理解CSRF攻击：攻击者盗用了你的身份，以你的名义发送恶意请求。CSRF能够做的事情包括：以你名义发送邮件，发消息，甚至于购买商品，虚拟货币转账…可以造成用户个人隐私泄露以及财产安全。</p>
+<p><center><img src="/images/csrf.png" alt="CSRF（跨站请求伪造）"></center><br>以上图为例，</p>
+<ol>
+<li>同一浏览器下。</li>
+<li>用户登陆jd.com。</li>
+<li>在未关闭jd.com的前提下，新开窗口访问了另一个包含CSRF攻击的网站。这里用csrf.com代称</li>
+<li>csrf.com直接发起一个jd.com的操作请求，由于用户已登陆jd.com，这个请求带上了合法的jd.com域cookie。</li>
+<li>jd.com接受请求，验证请求为合法操作，执行相关操作。</li>
+</ol>
+<p>这就是一个典型的CSRF攻击流程。<br>当然jd.com肯定对CSRF进行了防御，通常是referer check，所以我在demo演示时，使用了chrome插件强行将csrf.com下发出请求的referer值修改为了jd.com。</p>
+<p>对于CSRF的防御。我们通常采用以下方案：</p>
+<ol>
+<li>Referer Check — HTTP头中的Referer字段，进行域名校验。</li>
+<li>交互验证 — 比如验证码，短信验证等等。</li>
+<li>Token 校验 —  CSRF攻击的本质，其实是用户操作的参数可以被猜测到，如果我们使用攻击者无法猜测的数据做为校验，侧CSRF攻击无法进行。</li>
+</ol>
+<hr>
+<h2 id="XSS（跨站脚本攻击）"><a href="#XSS（跨站脚本攻击）" class="headerlink" title="XSS（跨站脚本攻击）"></a>XSS（跨站脚本攻击）</h2><p>因为现有电商网站对XSS防御非常好，这块会结合后面的代理劫持一起做示例演示。</p>
+<h3 id="什么是XSS攻击？"><a href="#什么是XSS攻击？" class="headerlink" title="什么是XSS攻击？"></a>什么是XSS攻击？</h3><p>XSS是利用WEB开发时的漏洞，通过某些方法，在网页上注入恶意代码。并执行恶意代码，通常来说，都是一些客户端脚本，javascript,vbscript。</p>
+<p>XSS攻击的方式是具有针对性的，针对不同的安全策略，采用不同的注入方案，以期望绕过拦截，在浏览器端执行恶意代码。同时XSS攻击随我们技术的发展，在同时进步，对XSS的防御我们应该随时警惕。</p>
+<h3 id="XSS攻击的类型？"><a href="#XSS攻击的类型？" class="headerlink" title="XSS攻击的类型？"></a>XSS攻击的类型？</h3><p>网上对XSS攻击分了各种类型，这里我根据自己的理解，只归为两大类：</p>
+<ol>
+<li>反射型XSS — 将输入数据简单的“反射”给浏览器， 非持久型XSS  ——  URL传参等。</li>
+<li>存储型XSS — 将输入数据 “存储” 在服务器上，持久型XSS —— 用户评论，用户发贴，签名等等。</li>
+</ol>
+<h3 id="常见的防御方案"><a href="#常见的防御方案" class="headerlink" title="常见的防御方案"></a>常见的防御方案</h3><ol>
+<li>Cookie —— 设置HttpOnly ，只允许由浏览器发起的请求中带Cookie ， 封堵了前端获取cookie的渠道。</li>
+<li>输入检测 —— 过滤提交内容，encode, js-xss等。</li>
+<li>输出转义 – 前后端模板引擎都可以帮我们完成这个事。</li>
+</ol>
+<h3 id="历史案例"><a href="#历史案例" class="headerlink" title="历史案例"></a>历史案例</h3><ol>
+<li>腾讯 —— QQ空间自定义样式 ， 初期QQ空间收费时，很多用户通过输入样式代码，免费装扮空间。</li>
+<li>腾讯 —— QQ空间自动转发不良信息。</li>
+<li>腾讯 —— QQ邮箱XSS漏洞可获取用户邮件列表信息及内容。</li>
+<li>百度 —— 百度空间XSS 蠕虫，用户互发垃圾消息。</li>
+<li>…</li>
+</ol>
+<p>以上案例有一个共同特征 —— 都是用户产生内容为主体的WEB站点。</p>
+<p>这类网站内容通常是带有用户自定义样式的富内容，针对这样的富内容，只依靠模板引擎暴力转义，将丢失用户的自定义样式，甚至可能引起页面报错阻塞。所以我们需要正确识别用户意图，有针对性的进行安全字符转义。</p>
+<p>业界对这种富文本场景也有非常成熟的方案:</p>
+<ol>
+<li>前端: JS-XSS</li>
+<li>后端: Anti-samy</li>
+</ol>
+<hr>
+<h2 id="Proxy-Hijack（代理劫持"><a href="#Proxy-Hijack（代理劫持" class="headerlink" title="Proxy Hijack（代理劫持)"></a>Proxy Hijack（代理劫持)</h2><p>关于代理劫持，网上有这样一组数据：</p>
+<p><center><img src="/images/proxy.png" alt="Proxy Hijack（代理劫持)"></center><br>我们可以看到，大部分代理服务器都没有使用HTTPS，小部分代理甚至有内容篡改行为。</p>
+<h3 id="不安全代理带来的危害："><a href="#不安全代理带来的危害：" class="headerlink" title="不安全代理带来的危害："></a>不安全代理带来的危害：</h3><ol>
+<li>网页广告植入</li>
+<li>窃取登陆凭证</li>
+<li>获取用户隐私</li>
+<li>……</li>
+</ol>
+<p>如果使用代理服务器，实际上你所访问的所有HTTP内容，都有可能是伪造的。</p>
+<h3 id="唯一的防御方式"><a href="#唯一的防御方式" class="headerlink" title="唯一的防御方式"></a>唯一的防御方式</h3><p>请使用https</p>
+<hr>
+<h2 id="获取登陆cookie演示"><a href="#获取登陆cookie演示" class="headerlink" title="获取登陆cookie演示"></a>获取登陆cookie演示</h2><p>现代电商对于安全问题也非常重视，所以我们这里通过代理劫持，模拟出不安全的前端环境，用于演示前端攻击。</p>
+<p><center><img src="/images/combo.png" alt="DEMO"></center><br>流程说明：</p>
+<ol>
+<li>攻击者发布免费代理</li>
+<li>普通用户通过网络途径等获取到代理地址</li>
+<li>普通用户在使用代理的情况下登陆了jd</li>
+<li>代理服务器劫持jd.com网页，篡改jd.com网页内容，注入xss攻击代码。</li>
+<li>被篡改的jd.com网站，通过js获取jd.com域下的cookie, 发送到代理服务器。</li>
+<li>同时由于这个系统登陆态cookie放在passport域下，该域cookie使用了httpOnly，所以发起一个被劫持的passport域下请求。passport域下的cookie被代理服务器获取到。</li>
+<li>代理服务器将jd.com及passport域下的cookie发送给攻击者</li>
+<li>攻击者本地代理jd.com域，访问一个任意jd.com域下地址，并通过本地代理服务器，注入刚刚由免费代理服务器发送来的cookie。</li>
+<li>攻击者此时已取得用户合法的登陆凭证。可以进行任意操作。</li>
+</ol>
+<p>这个demo利用代理，在没有安全漏洞的情况下，创建了一个前端安全漏洞。正常网络访问下，用户是不需要担心这些问题的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>客户端从客观上都是不可信任，任何的东西在客户端都有被伪造可能。前端工程师在渲染客户端时，需要时刻注意过滤可能存在的安全漏洞。服务器端工程师接收数据时，也应该注意数据安全校验，请求源的校验等等。对于敏感页面，前后端都可以进行协议头的监测，强制转换。</p>
+<p>另外产品角度也可以有意识的引导用户使用安全的环境环境，给出一些网络环境监测提醒，比如chrome最新版，已经将所有http页面标注为不安全页面。</p>
+<p>安全问题无止境，引用一段《白帽子讲安全》的话做为本文结束：</p>
+<blockquote>
+<p>安全是一门朴素的学问，也是一种平衡的艺术。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSRF/" rel="tag"># CSRF</a>
+          
+            <a href="/tags/XSS/" rel="tag"># XSS</a>
+          
+            <a href="/tags/前端安全/" rel="tag"># 前端安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/07/Mac-OS-下-Nexus-6p-还原官方系统，支持OTA简易教程/" rel="next" title="Mac OS 下 Nexus 6p  还原官方系统，支持OTA简易教程">
+                <i class="fa fa-chevron-left"></i> Mac OS 下 Nexus 6p  还原官方系统，支持OTA简易教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/08/解决Gitment初始化评论时validation failed/" rel="prev" title="解决Gitment初始化评论时validation failed">
+                解决Gitment初始化评论时validation failed <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+  <div id="comment"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+    var gitment = new Gitment({
+      id: 'page_s_blog_2018-03-06 01:22:36', // 可选。默认为 location.href
+      owner: 'pacez', // 可以是你的GitHub用户名，也可以是github id
+      repo: 'pacez.github.io',
+      oauth: {
+        client_id: '1f324f69b441bb001488',
+        client_secret: 'b010ddcfbd7762acc1afbabaa9d03ba895821133',
+      },
+    })
+    gitment.render('comment')
+  </script>
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="Pace Zhong">
+          <p class="site-author-name" itemprop="name">Pace Zhong</p>
+           
+              <p class="site-description motion-element" itemprop="description">简单快乐人</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://github.com/pacez" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#同源策略"><span class="nav-number">1.</span> <span class="nav-text">同源策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ClickJacking（点击劫持）"><span class="nav-number">2.</span> <span class="nav-text">ClickJacking（点击劫持）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRF（跨站请求伪造）"><span class="nav-number">3.</span> <span class="nav-text">CSRF（跨站请求伪造）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XSS（跨站脚本攻击）"><span class="nav-number">4.</span> <span class="nav-text">XSS（跨站脚本攻击）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是XSS攻击？"><span class="nav-number">4.1.</span> <span class="nav-text">什么是XSS攻击？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS攻击的类型？"><span class="nav-number">4.2.</span> <span class="nav-text">XSS攻击的类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见的防御方案"><span class="nav-number">4.3.</span> <span class="nav-text">常见的防御方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#历史案例"><span class="nav-number">4.4.</span> <span class="nav-text">历史案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Proxy-Hijack（代理劫持"><span class="nav-number">5.</span> <span class="nav-text">Proxy Hijack（代理劫持)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不安全代理带来的危害："><span class="nav-number">5.1.</span> <span class="nav-text">不安全代理带来的危害：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#唯一的防御方式"><span class="nav-number">5.2.</span> <span class="nav-text">唯一的防御方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取登陆cookie演示"><span class="nav-number">6.</span> <span class="nav-text">获取登陆cookie演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Pace Zhong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?008010baf81a25fbb0f6acdeeb47293e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+
+</body>
+</html>

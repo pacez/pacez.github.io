@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="QTXK5KB-iC_-HFY2MvRCXuio0pi2DDph9k_FLQUB5oU">
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="dejLC6gFLw">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="nodejs,mongodb,email template,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SRM是笔者在学习nodejs过程中的产物，主要实现了将style标签与link标签的css样式，动态解析到dom上。最终生成用style属性写样式的html文本，以符合大多数邮件系统对邮件模板的要求。">
+<meta name="keywords" content="nodejs,mongodb,email template">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nodejs实战——在线邮件模板编辑器SRM">
+<meta property="og:url" content="http://pacez.github.io/2015/12/23/nodejs实战——在线邮件模板编辑器SRM/index.html">
+<meta property="og:site_name" content="Pace&#39;s Blog">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SRM是笔者在学习nodejs过程中的产物，主要实现了将style标签与link标签的css样式，动态解析到dom上。最终生成用style属性写样式的html文本，以符合大多数邮件系统对邮件模板的要求。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pacez.github.io/images/srm.png">
+<meta property="og:updated_time" content="2021-05-24T08:52:37.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nodejs实战——在线邮件模板编辑器SRM">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SRM是笔者在学习nodejs过程中的产物，主要实现了将style标签与link标签的css样式，动态解析到dom上。最终生成用style属性写样式的html文本，以符合大多数邮件系统对邮件模板的要求。">
+<meta name="twitter:image" content="http://pacez.github.io/images/srm.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://pacez.github.io/2015/12/23/nodejs实战——在线邮件模板编辑器SRM/">
+
+
+
+
+
+  <title>nodejs实战——在线邮件模板编辑器SRM | Pace's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Pace's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-lottery">
+          <a href="/lottery" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            彩票
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://pacez.github.io/2015/12/23/nodejs实战——在线邮件模板编辑器SRM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Pace Zhong">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/default_avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Pace's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">nodejs实战——在线邮件模板编辑器SRM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-23T19:53:08+08:00">
+                2015-12-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SRM是笔者在学习nodejs过程中的产物，主要实现了将style标签与link标签的css样式，动态解析到dom上。最终生成用style属性写样式的html文本，以符合大多数邮件系统对邮件模板的要求。</p>
+<a id="more"></a>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;另外SRM没有用户体系，用户在进入首页时后，第一次保存时，会同步刷新页面，生成一个唯一链接，用户需要保存该链接。在关闭浏览器后，若想继续编辑之前的内容，访问之前的链接即可。</p>
+<p>SRM线上DEMO截图：<br><img src="/images/srm.png"></p>
+<p>SRM功能非常简单，没有复杂的业务逻辑，只有需求明确的功能开发，就是样式的解析，后续我们将一步一步讲解整个编辑器的开发过程。</p>
+<p>第一步，选择nodejs建站框架，笔者最近常用express，想当然就是他了。</p>
+<p>通过express初始化目录。命令：<code>express projectName</code></p>
+<p>开始构建路由,这里路由我没有从根目录开始构建，考虑到后期可能做首页，所以直接将路由命名为workspace</p>
+<p><hr></p>
+<h1 id="数据存储设计："><a href="#数据存储设计：" class="headerlink" title="数据存储设计："></a>数据存储设计：</h1><p>我们的数据读取是根据URL匹配的，而URL只有一个命叫id的参数。每一个id对应moogodb中一份code代码。是滴的。就是这么简单！简单粗爆的设计方式，设计初衷本就是内部工具，没有用户体系这个概念，后期即使需要做用户体系，也将直接接入公司的用户体系，保证公司用户体系的完整性。</p>
+<p><strong>页面数据结构如下：</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  urlId: id <span class="comment">//页面id</span></span><br><span class="line">  code: str <span class="comment">//未解析的html</span></span><br><span class="line">｝</span><br></pre></td></tr></table></figure></p>
+<p><hr></p>
+<h1 id="后端开发部分："><a href="#后端开发部分：" class="headerlink" title="后端开发部分："></a>后端开发部分：</h1><p><strong>一、编辑器页面渲染路由：</strong><br>构建思路：</p>
+<ol>
+<li>判断url是否带id参数</li>
+<li>若无id，直接渲染编辑器首页。</li>
+<li>若带有id,进入数据查询是否存在，若id不存在，重定向到首页，若id存在，取出对应的code</li>
+<li>将code返回前端用作源码编辑器显示，将code时行解析返回前端用作邮件html显示。</li>
+</ol>
+<p>代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 编辑器页面渲染 */</span></span><br><span class="line">router.get(<span class="string">''</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> urlId=req.query.id;<span class="comment">//获取地址上的id参数</span></span><br><span class="line">    <span class="keyword">if</span>(!urlId)&#123;</span><br><span class="line">      <span class="comment">//不带ID地址请求</span></span><br><span class="line">      res.render(<span class="string">'workspace'</span>, &#123;</span><br><span class="line">        pageConfig: pageConfig,</span><br><span class="line">        code: <span class="string">''</span>,</span><br><span class="line">        urlId: tools.createGUID(),<span class="comment">//前端生成唯一识别码，也可以利用mongodb的id</span></span><br><span class="line">        pageName: <span class="string">'workspace'</span></span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="comment">//请求带id,进行数据库查找</span></span><br><span class="line">      <span class="comment">//这里的db是作者自己封装的db对象，提供mongodb便捷操作，后期会有博文介绍作者自己的pana系列模块</span></span><br><span class="line">      db.inDB(&#123;</span><br><span class="line">        collectionName: <span class="string">"workspace"</span>,</span><br><span class="line">        queryParam: &#123;</span><br><span class="line">          urlId: urlId</span><br><span class="line">        &#125;,</span><br><span class="line">        result: <span class="function"><span class="keyword">function</span>(<span class="params">boolean,result</span>)</span>&#123;</span><br><span class="line">          <span class="keyword">if</span>(boolean)&#123;</span><br><span class="line">            <span class="comment">//数据匹配成功，</span></span><br><span class="line">            <span class="keyword">var</span> codeStr=result.code;</span><br><span class="line">            <span class="comment">//进行样式解析，后面会有代码介绍</span></span><br><span class="line">            jMailParse(codeStr,<span class="function"><span class="keyword">function</span>(<span class="params">parsedCodeStr</span>)</span>&#123;</span><br><span class="line">              <span class="comment">//渲染页面</span></span><br><span class="line">              res.render(<span class="string">'workspace'</span>, &#123;</span><br><span class="line">                pageConfig: pageConfig,</span><br><span class="line">                urlId: urlId,</span><br><span class="line">                code: codeStr,</span><br><span class="line">                parsedCodeStr: parsedCodeStr,</span><br><span class="line">                pageName: <span class="string">'workspace'</span></span><br><span class="line">              &#125;);</span><br><span class="line">            &#125;)</span><br><span class="line">          &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">//数据库没有这个id,重定向到工作平台首页</span></span><br><span class="line">            res.redirect(<span class="string">'/workspace'</span>)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><strong>二、核心功能jMailParse介绍</strong></p>
+<p>jMailParse模块是作者从同事JMail响应式邮件的工具包中，拆分出来的一个小模块。进行了简单修改，使其适用于SRM项目。该模块主要基于juice处理。非常easy，感兴趣的朋友可以移步 <a href="https://github.com/Automattic/juice" target="_blank" rel="noopener">juice</a> 查看具体信息。</p>
+<p>代码如下：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//清理空的style标签</span></span><br><span class="line"><span class="keyword">var</span> cleanEmptyStyle = <span class="function"><span class="keyword">function</span>(<span class="params">$</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> $styles = $(<span class="string">"style"</span>);</span><br><span class="line">    $styles.each(<span class="function"><span class="keyword">function</span>(<span class="params">index, style</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>($(style).is(<span class="string">":empty"</span>))&#123;</span><br><span class="line">            $(style).remove();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//进行样式解析，此处是个异步操作，提供callback处理后续业务</span></span><br><span class="line"><span class="keyword">var</span> parse = <span class="function"><span class="keyword">function</span>(<span class="params">htmlStr,callback</span>)</span>&#123;</span><br><span class="line">    juice.juiceResources(htmlStr, &#123;</span><br><span class="line">        preserveMediaQueries: <span class="literal">true</span>,</span><br><span class="line">        removeStyleTags: <span class="literal">true</span>,</span><br><span class="line">        webResources: &#123;</span><br><span class="line">            images: <span class="literal">false</span>, <span class="comment">// 忽略图片</span></span><br><span class="line">            scripts: <span class="literal">false</span> <span class="comment">// 忽略 js</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,<span class="function"><span class="keyword">function</span>(<span class="params">err, code</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> cheerio = Cheerio.load(code);</span><br><span class="line">        cleanEmptyStyle(cheerio);</span><br><span class="line">        code = tools.trim(cheerio.html());<span class="comment">//由pana-tools模块提供trim处理</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">typeof</span> callback ===<span class="string">"function"</span>) callback(code);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = parse;</span><br></pre></td></tr></table></figure></p>
+<p><strong>三、运行接口</strong><br>构建思路：</p>
+<ol>
+<li>获取postData。</li>
+<li>执行db update操作, 将urlId做为查询条件 ,有对应数据更新，无对应数据新增。</li>
+<li>结合前端代码实时刷新邮件html,预览界面。</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 运行接口 */</span></span><br><span class="line">router.post(<span class="string">"/run"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> postData=req.body,</span><br><span class="line">      createResponse=<span class="keyword">new</span> response(res);</span><br><span class="line">  db.update(&#123;</span><br><span class="line">    collectionName: <span class="string">'workspace'</span>,</span><br><span class="line">    selector: &#123; <span class="string">"urlId"</span>: postData.urlId&#125;,</span><br><span class="line">    data: postData,</span><br><span class="line">    success: <span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">      <span class="keyword">if</span>(data &amp;&amp; data.urlId==postData.urlId)&#123;</span><br><span class="line">        jMailParse(data.code,<span class="function"><span class="keyword">function</span>(<span class="params">parsedCodeStr</span>)</span>&#123;</span><br><span class="line">          data.parsedCodeStr=parsedCodeStr;</span><br><span class="line">          createResponse.success(data);</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      createResponse.error(&#123;<span class="attr">result</span>: data&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><strong>三、预览路由</strong><br>构建思路：</p>
+<ol>
+<li>使用iframe嵌入页面。</li>
+<li>获取页面参数id，若id不存在，渲染预览界面html为空</li>
+<li>若id存在将查询数据，若id在数据库中不存在，渲染预览界面html为空</li>
+<li>若id在数据库中存在，获取对应数据code值。</li>
+<li>将获取的code利用jMailParse进行解析，用作预览html显示。</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 预览界面 */</span></span><br><span class="line">router.get(<span class="string">"/preview"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> urlId=req.query.id;</span><br><span class="line">  <span class="keyword">if</span>(urlId)&#123;</span><br><span class="line">    db.inDB(&#123;</span><br><span class="line">      collectionName: <span class="string">"workspace"</span>,</span><br><span class="line">      queryParam: &#123;</span><br><span class="line">        urlId: urlId</span><br><span class="line">      &#125;,</span><br><span class="line">      result: <span class="function"><span class="keyword">function</span>(<span class="params">boolean,result</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(boolean)&#123;</span><br><span class="line">          <span class="comment">//数据匹配成功，渲染预览页面</span></span><br><span class="line">          <span class="keyword">var</span> codeStr=result.code;</span><br><span class="line">          jMailParse(codeStr,<span class="function"><span class="keyword">function</span>(<span class="params">htmlStr</span>)</span>&#123;</span><br><span class="line">            res.render(<span class="string">'preview'</span>, &#123;</span><br><span class="line">              htmlStr: htmlStr</span><br><span class="line">            &#125;);</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          <span class="comment">//数据库中不存在该urlid,渲染空页面</span></span><br><span class="line">          res.render(<span class="string">"preview"</span>,&#123;</span><br><span class="line">            htmlStr: <span class="string">""</span></span><br><span class="line">          &#125;)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//url不带id，渲染空页面</span></span><br><span class="line">  res.render(<span class="string">"preview"</span>,&#123;</span><br><span class="line">    htmlStr: <span class="string">""</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>后台代码基本结束，下面开始前端部分。</p>
+<hr>
+
+<h1 id="前端开发部分："><a href="#前端开发部分：" class="headerlink" title="前端开发部分："></a>前端开发部分：</h1><p>前端代码较为简单，注释比较全，大家直接看代码吧，有问题留言即可。<br>前端主要用到：</p>
+<ol>
+<li>materialize框架</li>
+<li>jQuery库</li>
+<li>codeMirror编辑器</li>
+</ol>
+<p>模板部分:<br>workspace.jade<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">doctype html</span><br><span class="line">html</span><br><span class="line">	include header</span><br><span class="line">	body</span><br><span class="line">		nav.nospace</span><br><span class="line">			.nav-wrapper.blue.darken-2.nospace</span><br><span class="line">				h1.logo</span><br><span class="line">					a(href=&apos;/&apos;) #&#123;pageConfig.projectName&#125;</span><br><span class="line">					span.desc 邮件在线编辑器</span><br><span class="line">				include menu</span><br><span class="line">				span.tips.green Save &amp; Run :  Mac (command+s) | Win (ctrl+s)</span><br><span class="line">		.content</span><br><span class="line">			.row.nospace</span><br><span class="line">				#left.col.l7.nospace</span><br><span class="line">					block htmlEditor</span><br><span class="line">				#right.col.l5.nospace.fullHeight</span><br><span class="line">					block htmlPreview</span><br></pre></td></tr></table></figure></p>
+<p>header.jade<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">head(lang=&quot;en&quot;)</span><br><span class="line">	title #&#123;pageConfig.title&#125;</span><br><span class="line">	meta(http-equiv=&quot;content-type&quot;, content=&quot;text/html; charset=UTF-8&quot;)</span><br><span class="line">	meta(name=&quot;description&quot;, content=&quot;&quot;)</span><br><span class="line">	meta(name=&quot;keywords&quot;, content=&quot;&quot;)</span><br><span class="line">	meta(name=&quot;viewport&quot;, content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;&quot;)</span><br><span class="line">	- if (pageConfig.devMode == true)</span><br><span class="line">		link(rel=&quot;stylesheet&quot;, href=&quot;/stylesheets/base/base.css&quot;, type=&quot;text/css&quot;)</span><br><span class="line">		link(rel=&quot;stylesheet&quot;, href=&quot;/stylesheets/#&#123;pageName&#125;.css&quot;, type=&quot;text/css&quot;)</span><br><span class="line">		script(type=&quot;application/javascript&quot;, src=&quot;/javascripts/lib/jquery.js&quot;)</span><br><span class="line">		script(type=&quot;application/javascript&quot;, src=&quot;/javascripts/lib/materialize.min.js&quot;)</span><br><span class="line">		script(type=&quot;application/javascript&quot;, src=&quot;/javascripts/lib/codemirror.js&quot;)</span><br><span class="line">		script(type=&quot;application/javascript&quot;, src=&quot;/javascripts/common/api.js&quot;)</span><br><span class="line">		block beforeJS</span><br><span class="line">		script(type=&quot;application/javascript&quot;, src=&quot;/javascripts/#&#123;pageName&#125;.js&quot;)</span><br><span class="line">	- else</span><br><span class="line">		link(rel=&quot;stylesheet&quot;, href=&quot;/stylesheets/dist/#&#123;pageName&#125;.css&quot;, type=&quot;text/css&quot;)</span><br><span class="line">		script(type=&quot;application/javascript&quot;, src=&quot;/javascripts/dist/#&#123;pageName&#125;.js&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>页面workspace.jade<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">extends template/workspace</span><br><span class="line">block beforeJS</span><br><span class="line">  script(src=&quot;/javascripts/common/codeEditor.js&quot; type=&quot;application/javascript&quot;)</span><br><span class="line"></span><br><span class="line">block htmlEditor</span><br><span class="line">  div#htmlEditor</span><br><span class="line">    textarea(id=&quot;htmlEditorTextarea&quot; placeholder=&quot;Code goes here...&quot; name=&quot;htmlEditorTextarea&quot;) #&#123;code&#125;</span><br><span class="line">  div.clearfix.sub-title 邮件HTML：</span><br><span class="line">  div#parseResult</span><br><span class="line">    textarea(id=&quot;htmlParseResult&quot; disabled=&quot;disabled&quot; placeholder=&quot;result is here...&quot; name=&quot;htmlEditorTextarea&quot;) #&#123;parsedCodeStr&#125;</span><br><span class="line"></span><br><span class="line">block htmlPreview</span><br><span class="line">  .htmlPreview.fullHeight</span><br><span class="line">    iframe(id=&quot;previewIframe&quot; src=&quot;/workspace/preview?id=#&#123;urlId&#125;&quot;, border=&quot;0&quot; width=&quot;100%&quot; height=&quot;100%&quot;)</span><br><span class="line">    input(type=&quot;hidden&quot;,value=&quot;#&#123;urlId&#125;&quot;,id=&quot;urlId&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>交互部分：<br>javascript代码<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取地址栏参数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getQueryString</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^|&amp;)"</span>+ name +<span class="string">"=([^&amp;]*)(&amp;|$)"</span>);</span><br><span class="line">  <span class="keyword">var</span> r = <span class="built_in">window</span>.location.search.substr(<span class="number">1</span>).match(reg);</span><br><span class="line">  <span class="keyword">if</span>(r!=<span class="literal">null</span>)<span class="keyword">return</span>  <span class="built_in">unescape</span>(r[<span class="number">2</span>]); <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//消息通知,仅用于refresh通知</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">message</span>(<span class="params">str</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.create=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    $(<span class="string">"body"</span>).append(<span class="string">'&lt;div id="message" class="message blue"&gt;'</span>+str+<span class="string">'&lt;/div&gt;'</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">this</span>.destory=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    $(<span class="string">"#message"</span>).remove();</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//计算codeMirror高度</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getHeight</span>(<span class="params">$dom,isSetHeight</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> offset=$dom.offset(),</span><br><span class="line">      top=offset.top;</span><br><span class="line">      <span class="keyword">if</span>(isSetHeight)&#123;</span><br><span class="line">        <span class="keyword">var</span> setHeight=($(<span class="built_in">window</span>).height()-top)/<span class="number">1.5</span>;</span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> setHeight=($(<span class="built_in">window</span>).height()-top);</span><br><span class="line">      &#125;</span><br><span class="line">  <span class="keyword">return</span> setHeight;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="comment">//实例化源码编辑器，codeEditor基于codeMirror二次封装 ，集成高度自适应功能。</span></span><br><span class="line">  <span class="keyword">var</span> htmlEditor=<span class="keyword">new</span> codeEditor(&#123;<span class="attr">id</span>: <span class="string">"htmlEditorTextarea"</span>,<span class="attr">isSetHeight</span>: <span class="literal">true</span>&#125;);</span><br><span class="line">  <span class="comment">//实例化邮件模板html编辑器，仅用于显示</span></span><br><span class="line">  <span class="keyword">var</span> htmlParseResultEditor=<span class="keyword">new</span> codeEditor(&#123;<span class="attr">id</span>: <span class="string">"htmlParseResult"</span>&#125;);</span><br><span class="line">  <span class="comment">//设置预览页面高度</span></span><br><span class="line">  $(<span class="string">".htmlPreview"</span>).height($(<span class="string">"#left"</span>).height());</span><br><span class="line">  <span class="keyword">var</span> urlId=$(<span class="string">"#urlId"</span>).val();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//调用后端run接口</span></span><br><span class="line">  <span class="keyword">var</span> run=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> htmlContent=htmlEditor.getValue();</span><br><span class="line">    <span class="keyword">if</span>(!$.trim(htmlContent))&#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> msg=<span class="keyword">new</span> message(<span class="string">"refresh..."</span>);</span><br><span class="line">    msg.create();</span><br><span class="line">    <span class="comment">//api是笔者封装的api方式，集成统一的消息处理机制，统一路径管理等功能。</span></span><br><span class="line">    api.post(&#123;</span><br><span class="line">      url: api.url.run,</span><br><span class="line">      abort: <span class="literal">true</span>,</span><br><span class="line">      data: &#123;</span><br><span class="line">        code: htmlContent,</span><br><span class="line">        urlId: urlId</span><br><span class="line">      &#125;,</span><br><span class="line">      success: <span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> queryId=getQueryString(<span class="string">"id"</span>)</span><br><span class="line">        <span class="keyword">if</span>(!queryId)&#123;</span><br><span class="line">          <span class="comment">//在新页面，执行run时，刷新页面带上urlId;</span></span><br><span class="line">          <span class="built_in">window</span>.location.href=<span class="string">"/workspace?id="</span>+urlId;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          <span class="comment">//window.location.reload();</span></span><br><span class="line">          <span class="comment">//在已有id的页面，执行run时，仅异步刷新预览界面与邮件模板html编辑器，</span></span><br><span class="line">          $(<span class="string">"#previewIframe"</span>).attr(<span class="string">"src"</span>,<span class="string">"/workspace/preview?id="</span>+urlId);</span><br><span class="line">          htmlParseResultEditor.setValue(data.result.parsedCodeStr);</span><br><span class="line">        &#125;</span><br><span class="line">        msg.destory();</span><br><span class="line">      &#125;,</span><br><span class="line">      error: <span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">        <span class="comment">//console.log(data)</span></span><br><span class="line">        msg.destory();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">//ctrl+s保存</span></span><br><span class="line">  $(<span class="string">"#htmlEditor"</span>).on(<span class="string">"keydown.workspace"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>((e.metaKey &amp;&amp; e.keyCode===<span class="number">83</span>) || (e.ctrlKey &amp;&amp; e.keyCode===<span class="number">83</span>))&#123;</span><br><span class="line">      e.preventDefault()</span><br><span class="line">      e.stopPropagation()</span><br><span class="line">      run();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">//运行按钮邦定运行方式</span></span><br><span class="line">  $(<span class="string">"#runBtn"</span>).on(<span class="string">"click.workspace"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    run();</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//窗口缩放，自适应高度</span></span><br><span class="line">  $(<span class="built_in">window</span>).resize(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    $htmlEditor=$(<span class="string">"#htmlEditor"</span>)</span><br><span class="line">    $htmlEditor.height(getHeight($htmlEditor,<span class="literal">true</span>));</span><br><span class="line">    htmlEditor.refresh();</span><br><span class="line">    $htmlParseResultEditor=$(<span class="string">"#parseResult"</span>)</span><br><span class="line">    $htmlParseResultEditor.height(getHeight($htmlParseResultEditor));</span><br><span class="line">    htmlParseResultEditor.refresh();</span><br><span class="line">    $(<span class="string">".htmlPreview"</span>).height($(<span class="string">"#left"</span>).height());</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+          
+            <a href="/tags/mongodb/" rel="tag"># mongodb</a>
+          
+            <a href="/tags/email-template/" rel="tag"># email template</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/21/express-花生壳-打通微信公众平台JSSDK开发之路/" rel="next" title="express+花生壳 打通微信公众平台JSSDK开发之路">
+                <i class="fa fa-chevron-left"></i> express+花生壳 打通微信公众平台JSSDK开发之路
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/18/如何优雅的管理DISABLED行为/" rel="prev" title="如何优雅的管理DISABLED行为">
+                如何优雅的管理DISABLED行为 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+  <div id="comment"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+    var gitment = new Gitment({
+      id: 'page_s_blog_2015-12-23 07:53:08', // 可选。默认为 location.href
+      owner: 'pacez', // 可以是你的GitHub用户名，也可以是github id
+      repo: 'pacez.github.io',
+      oauth: {
+        client_id: '1f324f69b441bb001488',
+        client_secret: 'b010ddcfbd7762acc1afbabaa9d03ba895821133',
+      },
+    })
+    gitment.render('comment')
+  </script>
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/default_avatar.jpg" alt="Pace Zhong">
+          <p class="site-author-name" itemprop="name">Pace Zhong</p>
+           
+              <p class="site-description motion-element" itemprop="description">简单快乐人</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://github.com/pacez" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据存储设计："><span class="nav-number">1.</span> <span class="nav-text">数据存储设计：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后端开发部分："><span class="nav-number">2.</span> <span class="nav-text">后端开发部分：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前端开发部分："><span class="nav-number">3.</span> <span class="nav-text">前端开发部分：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Pace Zhong</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?008010baf81a25fbb0f6acdeeb47293e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+
+</body>
+</html>
